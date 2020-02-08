@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="hitsquad",
-    version="0.0.3",
+    version="0.1.0",
     author="Shubham Arawkar",
     author_email="arawkar.shubham08@gmail.com",
     description="GGWP command broadcast over ssh",
@@ -28,4 +28,5 @@ setuptools.setup(
     ],
     install_requires=requirements,
     python_requires='>=3.5',
+    include_package_data=True
 )
