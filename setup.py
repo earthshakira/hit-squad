@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="hitsquad",
-    version="0.1.0",
+    version="0.2.1",
     author="Shubham Arawkar",
     author_email="arawkar.shubham08@gmail.com",
     description="GGWP command broadcast over ssh",

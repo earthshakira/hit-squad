@@ -7,22 +7,23 @@ import io
 import time
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 
 def thread_function(cmd):
     subprocess.call(cmd,shell=True)
 
-def run_parallel(creds,cmd,sshpass):
-    print(cmd)
-    threads = []
+def run_parallel(creds,base_cmd,sshpass):
+    executor = ThreadPoolExecutor(len(creds))
+    futures = []
     for (ip,password) in creds:
-        cmd = "{} -p {} ssh {} {}".format(sshpass,password,ip,cmd)
-        x = threading.Thread(target=thread_function, args=(cmd,))
-        threads.append(x)
-        x.start()
+        cmd = "{} -p {} ssh -o \"UserKnownHostsFile=/dev/null\" -o \"StrictHostKeyChecking=no\" {} \"{}\"".format(sshpass,password,ip,base_cmd)
+        future = executor.submit(thread_function, (cmd))
+        futures.append(future)
 
-    for index, thread in enumerate(threads):
-        thread.join()
+    for future in futures:
+        print(future.result())
+
 
 def main(): 
     parser = argparse.ArgumentParser(prog ='hitsquad', 
@@ -40,11 +41,12 @@ def main():
         print(row)
         (ip,password) = row.strip().split(",")
         creds.append((ip,password))
-    
+
+    args.command =  '\"'.join(args.command.split('"'))
     if args.parallel:
         run_parallel(creds,args.command,sshpass)
     else:
         print("----- {} -----".format(ip))
-        subprocess.call("{} -p {} ssh {} {}".format(sshpass,password,ip,args.command),shell=True)
+        subprocess.call("{} -p {} ssh -o \"UserKnownHostsFile=/dev/null\" -o \"StrictHostKeyChecking=no\" {} \"{}\"".format(sshpass,password,ip,args.command),shell=True)
 
 main()
