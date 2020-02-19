@@ -46,7 +46,7 @@ def main():
     if args.parallel:
         run_parallel(creds,args.command,sshpass)
     else:
-        print("----- {} -----".format(ip))
-        subprocess.call("{} -p {} ssh -o \"UserKnownHostsFile=/dev/null\" -o \"StrictHostKeyChecking=no\" {} \"{}\"".format(sshpass,password,ip,args.command),shell=True)
+        for (ip,password) in creds:
+            print("{} -p {} ssh -o \"StrictHostKeyChecking=no\" {} \"{}\"".format(sshpass,password,ip,args.command))
+            print(subprocess.call("{} -p {} ssh -o \"StrictHostKeyChecking=no\" {} \"{}\"".format(sshpass,password,ip,args.command),shell=True))
 
-main()
